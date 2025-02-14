@@ -1,0 +1,52 @@
+import pandas as pd
+from tqdm import tqdm
+
+# 示例数据
+df_pcr = pd.DataFrame({
+    'mob3_k30_ever': ['1%', '2', '3%'],
+    'fpd_k30_ever': ['4', '5', '6']
+})
+
+df_rms = pd.DataFrame({
+    'mob3_k30_ever': ['7%', '8', '9%'],
+    'fpd_k30_ever': ['10', '11', '12']
+})
+
+dataframes = [df_pcr, df_rms]
+
+def try_convert_to_float(df, col):
+    # 尝试将列转换为浮点数
+    try:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    except ValueError:
+        print(f"Error converting column {col} to float.")
+    return df
+
+def error_value_replace(df):
+    # 处理异常值
+    df.replace('', pd.NA, inplace=True)
+    df.fillna(0, inplace=True)
+    return df
+
+for df_i in dataframes:
+    # 转换指定字段为整数类型
+    df_i['mob3_k30_ever'] = df_i['mob3_k30_ever'].astype('int')
+    df_i['fpd_k30_ever'] = df_i['fpd_k30_ever'].astype('int')
+
+    # 过滤条件
+    df_i = df_i.query('mob3_k30_ever >= 0 or fpd_k30_ever >= 0')
+    print('y大于等于0后的df_i的shape:', df_i.shape)
+
+    # 带有百分号的列处理
+    percent_columns = [col for col in feature_list if df_i[col].astype(str).str.contains('%').any()]
+    for col in percent_columns:
+        df_i[col] = df_i[col].str.rstrip('%')
+
+    # 异常值调整
+    df_i = error_value_replace(df_i)
+
+    # 转成数值型字段
+    for col in tqdm(feature_list, position=0):
+        try_convert_to_float(df_i, col)
+
+    print(df_i.dtypes)
