@@ -1,2 +1,12 @@
-dfsa
-dga
+import pandas as pd
+
+# 嵌套列表结构
+iv_results = [
+    {'iv': 5, 'good_cnt_total': 10, 'bad_cnt_total': 20, 'cnt_total': 300, 'a': 3},
+    {'iv': 6, 'good_cnt_total': 12, 'bad_cnt_total': 22, 'cnt_total': 320, 'a': 4}
+]
+
+# 创建DataFrame
+df = pd.DataFrame(iv_results)
+
+print(df)
